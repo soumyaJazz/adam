@@ -1,0 +1,2034 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HSBC SIRE — Account Detail</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0d0f14;
+        --ink-mid: #3a3e4a;
+        --ink-soft: #7a808f;
+        --ink-muted: #b2b8c4;
+        --rule: #e4e7ed;
+        --surface: #f7f8fa;
+        --white: #ffffff;
+        --red: #db0011;
+        --blue: #1b4fd8;
+        --blue-dim: #eef2fd;
+        --amber: #c47f00;
+        --amber-dim: #fdf6e8;
+        --violet: #5e35b1;
+        --violet-dim: #f1eeff;
+        --rose: #c0183a;
+        --rose-dim: #fef0f3;
+        --green: #1a6b3c;
+        --green-dim: #edfaf3;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        font-size: 14px;
+      }
+
+      body {
+        font-family: "IBM Plex Sans", sans-serif;
+        background: var(--surface);
+        color: var(--ink);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ════════════════════════════════
+   HEADER
+════════════════════════════════ */
+      .header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: var(--white);
+        border-bottom: 1px solid var(--rule);
+        height: 48px;
+        display: flex;
+        align-items: stretch;
+        padding: 0 24px;
+        gap: 0;
+      }
+
+      .header-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-right: 24px;
+        border-right: 1px solid var(--rule);
+        margin-right: 8px;
+      }
+
+      .brand-mark {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5px;
+        width: 18px;
+        height: 18px;
+      }
+      .brand-mark i {
+        display: block;
+        background: var(--red);
+        border-radius: 1px;
+      }
+
+      .brand-name {
+        font-family: "Syne", sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        color: var(--ink);
+      }
+
+      .brand-divider {
+        width: 1px;
+        height: 12px;
+        background: var(--rule);
+      }
+
+      .brand-product {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        font-weight: 400;
+        color: var(--ink-soft);
+        letter-spacing: 0.05em;
+      }
+
+      .header-nav {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 16px;
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--ink-soft);
+        text-decoration: none;
+        border-bottom: 2px solid transparent;
+        transition: color 0.12s;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+
+      .nav-item:hover {
+        color: var(--ink);
+      }
+      .nav-item.active {
+        color: var(--ink);
+        font-weight: 500;
+        border-bottom-color: var(--red);
+      }
+
+      .nav-item svg {
+        width: 13px;
+        height: 13px;
+        flex-shrink: 0;
+      }
+
+      .header-end {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .env-pill {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        color: var(--ink-soft);
+        background: var(--surface);
+        border: 1px solid var(--rule);
+        padding: 2px 8px;
+        border-radius: 3px;
+      }
+
+      .user-avatar {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--ink);
+        color: var(--white);
+        font-size: 10px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        letter-spacing: 0.02em;
+      }
+
+      /* ════════════════════════════════
+   LAYOUT
+════════════════════════════════ */
+      .layout {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        min-height: calc(100vh - 48px);
+      }
+
+      /* ════════════════════════════════
+   LEFT SIDEBAR
+════════════════════════════════ */
+      .sidebar {
+        background: var(--white);
+        border-right: 1px solid var(--rule);
+        padding: 24px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .sidebar-section {
+        padding: 0 16px 20px;
+        border-bottom: 1px solid var(--rule);
+        margin-bottom: 20px;
+      }
+
+      .sidebar-section:last-child {
+        border-bottom: none;
+      }
+
+      .sidebar-label {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 9.5px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--ink-muted);
+        margin-bottom: 10px;
+        padding: 0 4px;
+      }
+
+      .stat-block {
+        padding: 10px 12px;
+        border-radius: 6px;
+        background: var(--surface);
+        border: 1px solid var(--rule);
+        margin-bottom: 6px;
+      }
+
+      .stat-block:last-child {
+        margin-bottom: 0;
+      }
+
+      .stat-num {
+        font-family: "Syne", sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--ink);
+        line-height: 1;
+        margin-bottom: 3px;
+      }
+
+      .stat-label {
+        font-size: 11px;
+        color: var(--ink-soft);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .stat-delta {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        font-weight: 500;
+      }
+
+      .delta-up {
+        color: var(--green);
+      }
+      .delta-down {
+        color: var(--rose);
+      }
+
+      .sidebar-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 5px;
+        font-size: 12.5px;
+        color: var(--ink-mid);
+        cursor: pointer;
+        transition:
+          background 0.1s,
+          color 0.1s;
+        margin-bottom: 2px;
+      }
+
+      .sidebar-link:hover {
+        background: var(--surface);
+      }
+
+      .sidebar-link.active {
+        background: var(--blue-dim);
+        color: var(--blue);
+        font-weight: 500;
+      }
+
+      .sidebar-link svg {
+        width: 13px;
+        height: 13px;
+        flex-shrink: 0;
+        opacity: 0.7;
+      }
+      .sidebar-link.active svg {
+        opacity: 1;
+      }
+
+      .sidebar-count {
+        margin-left: auto;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        font-weight: 500;
+        color: var(--ink-muted);
+        background: var(--rule);
+        padding: 1px 6px;
+        border-radius: 20px;
+      }
+
+      .sidebar-link.active .sidebar-count {
+        background: #c7d7fa;
+        color: var(--blue);
+      }
+
+      /* ════════════════════════════════
+   MAIN CONTENT
+════════════════════════════════ */
+      .main {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* ── ACCOUNT BANNER ── */
+      .account-banner {
+        background: var(--white);
+        border-bottom: 1px solid var(--rule);
+        padding: 20px 28px 0;
+        animation: fadeDown 0.3s ease both;
+      }
+
+      .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11.5px;
+        color: var(--ink-muted);
+        margin-bottom: 14px;
+        font-family: "IBM Plex Mono", monospace;
+      }
+
+      .breadcrumb a {
+        color: var(--ink-muted);
+        text-decoration: none;
+        transition: color 0.1s;
+      }
+      .breadcrumb a:hover {
+        color: var(--ink-soft);
+      }
+      .breadcrumb .crumb-sep {
+        font-size: 10px;
+      }
+
+      .account-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 16px;
+      }
+
+      .account-name-group {
+      }
+
+      .account-name {
+        font-family: "Syne", sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--ink);
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .status-active {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-family: "IBM Plex Sans", sans-serif;
+        font-size: 10.5px;
+        font-weight: 500;
+        color: var(--green);
+        background: var(--green-dim);
+        border: 1px solid #a3d9be;
+        padding: 3px 9px;
+        border-radius: 20px;
+        letter-spacing: 0.03em;
+      }
+
+      .status-active::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--green);
+        animation: blink 2.5s ease infinite;
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      .account-meta-row {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        flex-wrap: wrap;
+      }
+
+      .meta-chip {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        color: var(--ink-soft);
+        padding: 0 14px 0 0;
+        margin-right: 14px;
+        border-right: 1px solid var(--rule);
+      }
+
+      .meta-chip:last-child {
+        border-right: none;
+      }
+
+      .meta-key {
+        color: var(--ink-muted);
+        font-size: 11px;
+      }
+
+      .meta-val {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11.5px;
+        font-weight: 500;
+        color: var(--ink);
+      }
+
+      .account-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+        padding-top: 4px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 13px;
+        border-radius: 5px;
+        font-size: 12.5px;
+        font-family: "IBM Plex Sans", sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        transition: all 0.12s;
+        white-space: nowrap;
+      }
+
+      .btn svg {
+        width: 12px;
+        height: 12px;
+      }
+
+      .btn-outline {
+        background: var(--white);
+        color: var(--ink-mid);
+        border: 1px solid var(--rule);
+      }
+
+      .btn-outline:hover {
+        background: var(--surface);
+        border-color: #cdd2dc;
+      }
+
+      .btn-solid {
+        background: var(--ink);
+        color: var(--white);
+      }
+
+      .btn-solid:hover {
+        background: var(--ink-mid);
+      }
+
+      /* ── TAB BAR ── */
+      .tab-bar {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+        margin-top: 4px;
+      }
+
+      .tab {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 16px;
+        font-size: 12.5px;
+        font-weight: 400;
+        color: var(--ink-soft);
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        transition: color 0.12s;
+        white-space: nowrap;
+      }
+
+      .tab:hover {
+        color: var(--ink);
+      }
+
+      .tab.active {
+        color: var(--blue);
+        font-weight: 600;
+        border-bottom-color: var(--blue);
+      }
+
+      .tab-count {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        font-weight: 500;
+        padding: 1px 6px;
+        border-radius: 20px;
+        background: var(--rule);
+        color: var(--ink-soft);
+      }
+
+      .tab.active .tab-count {
+        background: var(--blue-dim);
+        color: var(--blue);
+      }
+
+      /* ── CONTENT AREA ── */
+      .content {
+        padding: 24px 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        overflow-y: auto;
+      }
+
+      /* ── RULE STATUS OVERVIEW ── */
+      .overview-grid {
+        display: grid;
+        grid-template-columns: 1fr 260px;
+        gap: 16px;
+        animation: fadeUp 0.3s ease 0.05s both;
+      }
+
+      .card {
+        background: var(--white);
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .card-title {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      .card-title svg {
+        width: 13px;
+        height: 13px;
+        color: var(--ink-soft);
+      }
+
+      .card-action {
+        font-size: 11.5px;
+        color: var(--blue);
+        cursor: pointer;
+        font-weight: 500;
+      }
+
+      /* Progress Card */
+      .progress-body {
+        padding: 18px;
+      }
+
+      .big-progress-wrap {
+        margin-bottom: 18px;
+      }
+
+      .big-progress-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 8px;
+      }
+
+      .big-progress-label .total {
+        font-family: "Syne", sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .big-progress-label .total-sub {
+        font-size: 11.5px;
+        color: var(--ink-muted);
+      }
+
+      .big-bar {
+        height: 10px;
+        border-radius: 5px;
+        background: var(--rule);
+        display: flex;
+        overflow: hidden;
+        gap: 2px;
+      }
+
+      .bar-seg {
+        border-radius: 5px;
+        transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .seg-gen {
+        background: var(--blue);
+        width: 73%;
+      }
+      .seg-test {
+        background: var(--amber);
+        width: 25%;
+      }
+      .seg-sub {
+        background: var(--violet);
+        width: 3%;
+      }
+      .seg-out {
+        background: var(--rose);
+        width: 1%;
+      }
+
+      .status-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .status-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 6px;
+        border: 1px solid var(--rule);
+        cursor: pointer;
+        transition:
+          border-color 0.12s,
+          background 0.12s;
+      }
+
+      .status-item:hover {
+        border-color: #cdd2dc;
+        background: var(--surface);
+      }
+
+      .status-swatch {
+        width: 3px;
+        height: 28px;
+        border-radius: 2px;
+        flex-shrink: 0;
+      }
+
+      .status-info {
+      }
+      .status-count {
+        font-family: "Syne", sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1;
+        margin-bottom: 2px;
+      }
+
+      .status-name {
+        font-size: 11px;
+        color: var(--ink-soft);
+      }
+
+      .status-pct {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        color: var(--ink-muted);
+        margin-left: auto;
+      }
+
+      /* Pipeline Card */
+      .pipeline-body {
+        padding: 16px 18px;
+      }
+
+      .pipeline-step {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding-bottom: 16px;
+        position: relative;
+      }
+
+      .pipeline-step:last-child {
+        padding-bottom: 0;
+      }
+
+      .pipeline-step::before {
+        content: "";
+        position: absolute;
+        left: 11px;
+        top: 22px;
+        bottom: 0;
+        width: 1px;
+        background: var(--rule);
+      }
+
+      .pipeline-step:last-child::before {
+        display: none;
+      }
+
+      .pipe-dot {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 2px solid var(--rule);
+        background: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+      }
+
+      .pipe-dot.done {
+        border-color: var(--blue);
+        background: var(--blue-dim);
+      }
+      .pipe-dot.active {
+        border-color: var(--amber);
+        background: var(--amber-dim);
+      }
+      .pipe-dot.idle {
+        border-color: var(--rule);
+        background: var(--surface);
+      }
+
+      .pipe-dot svg {
+        width: 10px;
+        height: 10px;
+      }
+      .pipe-dot.done svg {
+        color: var(--blue);
+      }
+      .pipe-dot.active svg {
+        color: var(--amber);
+      }
+      .pipe-dot.idle svg {
+        color: var(--ink-muted);
+      }
+
+      .pipe-info {
+      }
+      .pipe-stage {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 2px;
+      }
+      .pipe-sub {
+        font-size: 11px;
+        color: var(--ink-soft);
+      }
+      .pipe-num {
+        margin-left: auto;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--ink-mid);
+        flex-shrink: 0;
+        padding-top: 2px;
+      }
+
+      /* ── RULES TABLE ── */
+      .table-card {
+        background: var(--white);
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        overflow: hidden;
+        animation: fadeUp 0.3s ease 0.1s both;
+      }
+
+      .table-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 18px;
+        border-bottom: 1px solid var(--rule);
+        background: var(--surface);
+      }
+
+      .search-wrap {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: var(--white);
+        border: 1px solid var(--rule);
+        border-radius: 5px;
+        padding: 5px 11px;
+        flex: 1;
+        max-width: 280px;
+        transition: border-color 0.12s;
+      }
+
+      .search-wrap:focus-within {
+        border-color: #9ab0f0;
+      }
+      .search-wrap svg {
+        width: 12px;
+        height: 12px;
+        color: var(--ink-muted);
+        flex-shrink: 0;
+      }
+      .search-wrap input {
+        border: none;
+        outline: none;
+        background: none;
+        font-size: 12.5px;
+        font-family: "IBM Plex Sans", sans-serif;
+        color: var(--ink);
+        width: 100%;
+      }
+      .search-wrap input::placeholder {
+        color: var(--ink-muted);
+      }
+
+      .filter-chips {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex: 1;
+      }
+
+      .filter-chip {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11.5px;
+        font-weight: 500;
+        padding: 4px 10px;
+        border-radius: 20px;
+        cursor: pointer;
+        border: 1.5px solid transparent;
+        transition: all 0.1s;
+      }
+
+      .fc-all {
+        background: var(--ink);
+        color: var(--white);
+      }
+      .fc-gen {
+        background: var(--blue-dim);
+        color: var(--blue);
+        border-color: #c7d7fa;
+      }
+      .fc-test {
+        background: var(--amber-dim);
+        color: var(--amber);
+        border-color: #f0d9a0;
+      }
+      .fc-sub {
+        background: var(--violet-dim);
+        color: var(--violet);
+        border-color: #d5c8f7;
+      }
+      .fc-out {
+        background: var(--rose-dim);
+        color: var(--rose);
+        border-color: #f5c2cc;
+      }
+      .fc-appr {
+        background: var(--green-dim);
+        color: var(--green);
+        border-color: #a3d9be;
+      }
+
+      .filter-chip:hover {
+        opacity: 0.8;
+        transform: translateY(-1px);
+      }
+
+      .toolbar-right {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* Table */
+      .tbl {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .tbl thead tr {
+        background: var(--surface);
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .tbl th {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 9.5px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink-muted);
+        padding: 9px 16px;
+        text-align: left;
+        white-space: nowrap;
+      }
+
+      .tbl th:first-child {
+        width: 40px;
+        text-align: center;
+      }
+
+      .tbl tbody tr {
+        border-bottom: 1px solid var(--rule);
+        transition: background 0.1s;
+        cursor: pointer;
+      }
+
+      .tbl tbody tr:last-child {
+        border-bottom: none;
+      }
+      .tbl tbody tr:hover {
+        background: #f5f7ff;
+      }
+
+      .tbl td {
+        padding: 12px 16px;
+        font-size: 12.5px;
+        color: var(--ink);
+        vertical-align: middle;
+      }
+
+      .tbl td:first-child {
+        text-align: center;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        color: var(--ink-muted);
+        font-weight: 500;
+      }
+
+      .rule-primary {
+        font-weight: 500;
+        color: var(--ink);
+        margin-bottom: 2px;
+      }
+      .rule-expr {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10.5px;
+        color: var(--ink-soft);
+      }
+
+      /* Status pill */
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 8px;
+        border-radius: 4px;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+
+      .pill::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 1px;
+      }
+
+      .pill-gen {
+        background: var(--blue-dim);
+        color: var(--blue);
+      }
+      .pill-gen::before {
+        background: var(--blue);
+      }
+      .pill-test {
+        background: var(--amber-dim);
+        color: var(--amber);
+      }
+      .pill-test::before {
+        background: var(--amber);
+      }
+      .pill-sub {
+        background: var(--violet-dim);
+        color: var(--violet);
+      }
+      .pill-sub::before {
+        background: var(--violet);
+      }
+      .pill-out {
+        background: var(--rose-dim);
+        color: var(--rose);
+      }
+      .pill-out::before {
+        background: var(--rose);
+      }
+      .pill-appr {
+        background: var(--green-dim);
+        color: var(--green);
+      }
+      .pill-appr::before {
+        background: var(--green);
+      }
+
+      /* Confidence */
+      .conf-wrap {
+        min-width: 90px;
+      }
+      .conf-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 4px;
+      }
+      .conf-val {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        font-weight: 500;
+      }
+      .conf-bar {
+        height: 3px;
+        border-radius: 2px;
+        background: var(--rule);
+        overflow: hidden;
+      }
+      .conf-fill {
+        height: 100%;
+        border-radius: 2px;
+      }
+      .fill-high {
+        background: var(--blue);
+      }
+      .fill-mid {
+        background: var(--amber);
+      }
+      .fill-low {
+        background: var(--rose);
+      }
+
+      .match-stat {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-soft);
+      }
+
+      .date-cell {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-muted);
+      }
+
+      .row-actions {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.12s;
+      }
+
+      .tbl tbody tr:hover .row-actions {
+        opacity: 1;
+      }
+
+      .icon-btn {
+        width: 26px;
+        height: 26px;
+        border-radius: 5px;
+        border: 1px solid var(--rule);
+        background: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--ink-soft);
+        transition: all 0.1s;
+      }
+
+      .icon-btn:hover {
+        background: var(--surface);
+        border-color: #cdd2dc;
+        color: var(--ink);
+      }
+      .icon-btn svg {
+        width: 12px;
+        height: 12px;
+      }
+
+      /* Pagination */
+      .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 11px 18px;
+        border-top: 1px solid var(--rule);
+        background: var(--surface);
+      }
+
+      .page-info {
+        font-size: 11.5px;
+        color: var(--ink-soft);
+        font-family: "IBM Plex Mono", monospace;
+      }
+
+      .page-btns {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .page-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 5px;
+        border: 1px solid var(--rule);
+        background: var(--white);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 12px;
+        font-family: "IBM Plex Mono", monospace;
+        color: var(--ink-soft);
+        transition: all 0.1s;
+      }
+
+      .page-btn:hover {
+        background: var(--surface);
+      }
+      .page-btn.active {
+        background: var(--ink);
+        color: var(--white);
+        border-color: var(--ink);
+      }
+      .page-btn svg {
+        width: 11px;
+        height: 11px;
+      }
+
+      /* ════════════════════════════════
+   ANIMATIONS
+════════════════════════════════ */
+      @keyframes fadeDown {
+        from {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ═══ HEADER ═══════════════════════════════════════ -->
+    <header class="header">
+      <div class="header-brand">
+        <div class="brand-mark"><i></i><i></i><i></i><i></i></div>
+        <span class="brand-name">HSBC</span>
+        <div class="brand-divider"></div>
+        <span class="brand-product">SIRE</span>
+      </div>
+
+      <nav class="header-nav">
+        <a class="nav-item" href="#">
+          <svg
+            viewBox="0 0 13 13"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.4"
+          >
+            <path d="M1 5.2L6.5 1 12 5.2V12H8.5V8.5H4.5V12H1V5.2z" />
+          </svg>
+          Statistics
+        </a>
+        <a class="nav-item active" href="#">
+          <svg
+            viewBox="0 0 13 13"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.4"
+          >
+            <rect x="1" y="3" width="11" height="9" rx="1" />
+            <path d="M4 3V2a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1" />
+            <line x1="4" y1="7" x2="9" y2="7" />
+          </svg>
+          Accounts
+        </a>
+        <a class="nav-item" href="#">
+          <svg
+            viewBox="0 0 13 13"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.4"
+          >
+            <rect x="1" y="1" width="11" height="11" rx="1" />
+            <line x1="4" y1="5" x2="9" y2="5" />
+            <line x1="4" y1="8" x2="7" y2="8" />
+          </svg>
+          Rules
+        </a>
+      </nav>
+
+      <div class="header-end">
+        <span class="env-pill">TLM · HBEU</span>
+        <div class="user-avatar">AK</div>
+      </div>
+    </header>
+
+    <!-- ═══ LAYOUT ════════════════════════════════════════ -->
+    <div class="layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-label">Rule Health</div>
+          <div class="stat-block">
+            <div class="stat-num">93</div>
+            <div class="stat-label">
+              Total Rules
+              <span class="stat-delta delta-up">+4 this week</span>
+            </div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-num" style="color: var(--green)">88%</div>
+            <div class="stat-label">
+              Match Rate
+              <span class="stat-delta delta-up">↑ 2.1%</span>
+            </div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-num" style="color: var(--rose)">1</div>
+            <div class="stat-label">
+              Outdated Rules
+              <span class="stat-delta delta-down">needs review</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Filters</div>
+          <div class="sidebar-link active">
+            <svg
+              viewBox="0 0 13 13"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+            >
+              <rect x="1" y="1" width="11" height="11" rx="1" />
+            </svg>
+            All Rules
+            <span class="sidebar-count">93</span>
+          </div>
+          <div class="sidebar-link">
+            <svg
+              viewBox="0 0 13 13"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+            >
+              <circle cx="6.5" cy="6.5" r="5" />
+              <path d="M4 6.5l2 2 3-3" />
+            </svg>
+            Generated
+            <span class="sidebar-count">68</span>
+          </div>
+          <div class="sidebar-link">
+            <svg
+              viewBox="0 0 13 13"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+            >
+              <path d="M6.5 1v6l3 2" />
+              <circle cx="6.5" cy="6.5" r="5" />
+            </svg>
+            Tested
+            <span class="sidebar-count">23</span>
+          </div>
+          <div class="sidebar-link">
+            <svg
+              viewBox="0 0 13 13"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+            >
+              <path d="M1 7l3 3 8-6" />
+            </svg>
+            Submitted
+            <span class="sidebar-count">3</span>
+          </div>
+          <div class="sidebar-link">
+            <svg
+              viewBox="0 0 13 13"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+            >
+              <circle cx="6.5" cy="6.5" r="5" />
+              <line x1="6.5" y1="4" x2="6.5" y2="7" />
+              <circle cx="6.5" cy="9" r=".5" fill="currentColor" />
+            </svg>
+            Outdated
+            <span class="sidebar-count">1</span>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Production</div>
+          <div class="sidebar-link">
+            <svg
+              viewBox="0 0 13 13"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+            >
+              <polygon points="6.5,1 12,10 1,10" />
+            </svg>
+            In Production
+          </div>
+          <div class="sidebar-link">
+            <svg
+              viewBox="0 0 13 13"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+            >
+              <rect x="2" y="4" width="9" height="7" rx="1" />
+              <path d="M4 4V3a2.5 2.5 0 0 1 5 0v1" />
+            </svg>
+            Prod. Rules
+          </div>
+          <div class="sidebar-link" style="color: var(--green)">
+            <svg
+              viewBox="0 0 13 13"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+            >
+              <path d="M1 7l3 3 8-6" />
+            </svg>
+            Approved
+          </div>
+          <div class="sidebar-link" style="color: var(--rose)">
+            <svg
+              viewBox="0 0 13 13"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+            >
+              <line x1="2" y1="2" x2="11" y2="11" />
+              <line x1="11" y1="2" x2="2" y2="11" />
+            </svg>
+            Rejected
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <main class="main">
+        <!-- Account Banner -->
+        <div class="account-banner">
+          <div class="breadcrumb">
+            <a href="#">Dashboard</a>
+            <span class="crumb-sep">/</span>
+            <a href="#">Accounts</a>
+            <span class="crumb-sep">/</span>
+            <span style="color: var(--ink-soft)">HUF-00204500125</span>
+          </div>
+
+          <div class="account-top">
+            <div class="account-name-group">
+              <div class="account-name">
+                HUF-00204500125 UNICREDIT BK HUNGARY-PAR
+                <span class="status-active">Active</span>
+              </div>
+              <div class="account-meta-row">
+                <div class="meta-chip">
+                  <span class="meta-key">ID</span>
+                  <span class="meta-val">100004001</span>
+                </div>
+                <div class="meta-chip">
+                  <span class="meta-key">Asset Class</span>
+                  <span class="meta-val">Asset Services</span>
+                </div>
+                <div class="meta-chip">
+                  <span class="meta-key">Type</span>
+                  <span class="meta-val">MOT</span>
+                </div>
+                <div class="meta-chip">
+                  <span class="meta-key">Platform</span>
+                  <span class="meta-val">TLM</span>
+                </div>
+                <div class="meta-chip">
+                  <span class="meta-key">Region</span>
+                  <span class="meta-val">HBEU</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="account-actions">
+              <button class="btn btn-outline">
+                <svg
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                >
+                  <path d="M6 1v8M2 5l4 4 4-4" />
+                  <line x1="1" y1="11" x2="11" y2="11" />
+                </svg>
+                Export
+              </button>
+              <button class="btn btn-outline">
+                <svg
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                >
+                  <circle cx="6" cy="6" r="5" />
+                  <line x1="6" y1="4" x2="6" y2="8" />
+                  <line x1="4" y1="6" x2="8" y2="6" />
+                </svg>
+                Add Rule
+              </button>
+              <button class="btn btn-solid">
+                <svg
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                >
+                  <polygon points="2,2 10,6 2,10" />
+                </svg>
+                Propose AI Rule
+              </button>
+            </div>
+          </div>
+
+          <div class="tab-bar">
+            <div class="tab active">
+              Rules <span class="tab-count">93</span>
+            </div>
+            <div class="tab">Analytics</div>
+            <div class="tab">Match History</div>
+            <div class="tab">Audit Log</div>
+            <div class="tab">Settings</div>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+          <!-- Overview Grid -->
+          <div class="overview-grid">
+            <!-- Progress Card -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">
+                  <svg
+                    viewBox="0 0 13 13"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                  >
+                    <rect x="1" y="7" width="3" height="5" rx="1" />
+                    <rect x="5" y="4" width="3" height="8" rx="1" />
+                    <rect x="9" y="1" width="3" height="11" rx="1" />
+                  </svg>
+                  Rule Status Distribution
+                </div>
+                <span class="card-action">View all →</span>
+              </div>
+              <div class="progress-body">
+                <div class="big-progress-wrap">
+                  <div class="big-progress-label">
+                    <div>
+                      <div class="total">93</div>
+                      <div class="total-sub">total rules across all stages</div>
+                    </div>
+                  </div>
+                  <div class="big-bar">
+                    <div class="bar-seg seg-gen"></div>
+                    <div class="bar-seg seg-test"></div>
+                    <div class="bar-seg seg-sub"></div>
+                    <div class="bar-seg seg-out"></div>
+                  </div>
+                </div>
+
+                <div class="status-grid">
+                  <div class="status-item">
+                    <div
+                      class="status-swatch"
+                      style="background: var(--blue)"
+                    ></div>
+                    <div class="status-info">
+                      <div class="status-count" style="color: var(--blue)">
+                        68
+                      </div>
+                      <div class="status-name">Generated</div>
+                    </div>
+                    <div class="status-pct">73%</div>
+                  </div>
+                  <div class="status-item">
+                    <div
+                      class="status-swatch"
+                      style="background: var(--amber)"
+                    ></div>
+                    <div class="status-info">
+                      <div class="status-count" style="color: var(--amber)">
+                        23
+                      </div>
+                      <div class="status-name">Tested</div>
+                    </div>
+                    <div class="status-pct">25%</div>
+                  </div>
+                  <div class="status-item">
+                    <div
+                      class="status-swatch"
+                      style="background: var(--violet)"
+                    ></div>
+                    <div class="status-info">
+                      <div class="status-count" style="color: var(--violet)">
+                        3
+                      </div>
+                      <div class="status-name">Submitted</div>
+                    </div>
+                    <div class="status-pct">3%</div>
+                  </div>
+                  <div class="status-item">
+                    <div
+                      class="status-swatch"
+                      style="background: var(--rose)"
+                    ></div>
+                    <div class="status-info">
+                      <div class="status-count" style="color: var(--rose)">
+                        1
+                      </div>
+                      <div class="status-name">Outdated</div>
+                    </div>
+                    <div class="status-pct">1%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pipeline Card -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">
+                  <svg
+                    viewBox="0 0 13 13"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                  >
+                    <circle cx="6.5" cy="6.5" r="5" />
+                    <path d="M6.5 3.5v3l2 1.5" />
+                  </svg>
+                  Rule Pipeline
+                </div>
+              </div>
+              <div class="pipeline-body">
+                <div class="pipeline-step">
+                  <div class="pipe-dot done">
+                    <svg
+                      viewBox="0 0 10 10"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    >
+                      <path d="M2 5l2 2 4-4" />
+                    </svg>
+                  </div>
+                  <div class="pipe-info">
+                    <div class="pipe-stage">Generation</div>
+                    <div class="pipe-sub">AI-proposed rules</div>
+                  </div>
+                  <div class="pipe-num">68</div>
+                </div>
+                <div class="pipeline-step">
+                  <div class="pipe-dot active">
+                    <svg
+                      viewBox="0 0 10 10"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    >
+                      <circle cx="5" cy="5" r="3" />
+                    </svg>
+                  </div>
+                  <div class="pipe-info">
+                    <div class="pipe-stage">Testing</div>
+                    <div class="pipe-sub">Backtesting in progress</div>
+                  </div>
+                  <div class="pipe-num">23</div>
+                </div>
+                <div class="pipeline-step">
+                  <div class="pipe-dot idle">
+                    <svg
+                      viewBox="0 0 10 10"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    >
+                      <path d="M2 5l2 2 4-4" opacity="0.4" />
+                    </svg>
+                  </div>
+                  <div class="pipe-info">
+                    <div class="pipe-stage">Submission</div>
+                    <div class="pipe-sub">Awaiting approval</div>
+                  </div>
+                  <div class="pipe-num">3</div>
+                </div>
+                <div class="pipeline-step">
+                  <div class="pipe-dot idle">
+                    <svg
+                      viewBox="0 0 10 10"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                    >
+                      <rect x="2" y="3" width="6" height="5" rx="1" />
+                      <path d="M3.5 3V2a1.5 1.5 0 0 1 3 0v1" />
+                    </svg>
+                  </div>
+                  <div class="pipe-info">
+                    <div class="pipe-stage">Production</div>
+                    <div class="pipe-sub">Live matching rules</div>
+                  </div>
+                  <div class="pipe-num" style="color: var(--ink-muted)">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rules Table -->
+          <div class="table-card">
+            <div class="table-toolbar">
+              <div class="search-wrap">
+                <svg
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                >
+                  <circle cx="5" cy="5" r="4" />
+                  <path d="m8.5 8.5 2 2" />
+                </svg>
+                <input type="text" placeholder="Search rules, expressions…" />
+              </div>
+              <div class="filter-chips">
+                <div class="filter-chip fc-all">All</div>
+                <div class="filter-chip fc-gen">Generated</div>
+                <div class="filter-chip fc-test">Tested</div>
+                <div class="filter-chip fc-sub">Submitted</div>
+                <div class="filter-chip fc-out">Outdated</div>
+                <div class="filter-chip fc-appr">Approved</div>
+              </div>
+              <div class="toolbar-right">
+                <button
+                  class="btn btn-outline"
+                  style="font-size: 11.5px; padding: 5px 10px"
+                >
+                  <svg
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    width="12"
+                    height="12"
+                  >
+                    <path d="M6 1v8M2 5l4 4 4-4" />
+                    <line x1="1" y1="11" x2="11" y2="11" />
+                  </svg>
+                  Export
+                </button>
+              </div>
+            </div>
+
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Rule Name / Expression</th>
+                  <th>Status</th>
+                  <th>Confidence</th>
+                  <th>Matched / Total</th>
+                  <th>Updated</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>01</td>
+                  <td>
+                    <div class="rule-primary">ISIN Exact Match</div>
+                    <div class="rule-expr">txn_isin = ref_isin</div>
+                  </td>
+                  <td><span class="pill pill-gen">Generated</span></td>
+                  <td>
+                    <div class="conf-wrap">
+                      <div class="conf-top">
+                        <span class="conf-val" style="color: var(--blue)"
+                          >94%</span
+                        >
+                      </div>
+                      <div class="conf-bar">
+                        <div
+                          class="conf-fill fill-high"
+                          style="width: 94%"
+                        ></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="match-stat">2,341 / 2,489</span></td>
+                  <td><span class="date-cell">28 Mar 2026</span></td>
+                  <td>
+                    <div class="row-actions">
+                      <div class="icon-btn" title="Review">
+                        <svg
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.4"
+                        >
+                          <path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z" />
+                          <circle cx="6" cy="6" r="1.5" />
+                        </svg>
+                      </div>
+                      <div class="icon-btn" title="Approve">
+                        <svg
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.4"
+                        >
+                          <path d="M2 6l3 3 5-5" />
+                        </svg>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>02</td>
+                  <td>
+                    <div class="rule-primary">Settlement Date ± 2D</div>
+                    <div class="rule-expr">ABS(txn_date − ref_date) ≤ 2</div>
+                  </td>
+                  <td><span class="pill pill-test">Tested</span></td>
+                  <td>
+                    <div class="conf-wrap">
+                      <div class="conf-top">
+                        <span class="conf-val" style="color: var(--amber)"
+                          >87%</span
+                        >
+                      </div>
+                      <div class="conf-bar">
+                        <div
+                          class="conf-fill fill-mid"
+                          style="width: 87%"
+                        ></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="match-stat">1,102 / 1,267</span></td>
+                  <td><span class="date-cell">26 Mar 2026</span></td>
+                  <td>
+                    <div class="row-actions">
+                      <div class="icon-btn">
+                        <svg
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.4"
+                        >
+                          <path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z" />
+                          <circle cx="6" cy="6" r="1.5" />
+                        </svg>
+                      </div>
+                      <div class="icon-btn">
+                        <svg
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.4"
+                        >
+                          <path d="M2 6l3 3 5-5" />
+                        </svg>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>03</td>
+                  <td>
+                    <div class="rule-primary">Amount Tolerance 0.01</div>
+                    <div class="rule-expr">ABS(txn_amt − ref_amt) ≤ 0.01</div>
+                  </td>
+                  <td><span class="pill pill-sub">Submitted</span></td>
+                  <td>
+                    <div class="conf-wrap">
+                      <div class="conf-top">
+                        <span class="conf-val" style="color: var(--blue)"
+                          >99%</span
+                        >
+                      </div>
+                      <div class="conf-bar">
+                        <div
+                          class="conf-fill fill-high"
+                          style="width: 99%"
+                        ></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="match-stat">4,210 / 4,253</span></td>
+                  <td><span class="date-cell">25 Mar 2026</span></td>
+                  <td>
+                    <div class="row-actions">
+                      <div class="icon-btn">
+                        <svg
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.4"
+                        >
+                          <path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z" />
+                          <circle cx="6" cy="6" r="1.5" />
+                        </svg>
+                      </div>
+                      <div class="icon-btn">
+                        <svg
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.4"
+                        >
+                          <path d="M2 6l3 3 5-5" />
+                        </svg>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>04</td>
+                  <td>
+                    <div class="rule-primary">Currency Code Match</div>
+                    <div class="rule-expr">
+                      txn_ccy = ref_ccy AND txn_ccy = 'HUF'
+                    </div>
+                  </td>
+                  <td><span class="pill pill-out">Outdated</span></td>
+                  <td>
+                    <div class="conf-wrap">
+                      <div class="conf-top">
+                        <span class="conf-val" style="color: var(--rose)"
+                          >61%</span
+                        >
+                      </div>
+                      <div class="conf-bar">
+                        <div
+                          class="conf-fill fill-low"
+                          style="width: 61%"
+                        ></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="match-stat">890 / 1,460</span></td>
+                  <td><span class="date-cell">14 Feb 2026</span></td>
+                  <td>
+                    <div class="row-actions">
+                      <div class="icon-btn">
+                        <svg
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.4"
+                        >
+                          <path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z" />
+                          <circle cx="6" cy="6" r="1.5" />
+                        </svg>
+                      </div>
+                      <div class="icon-btn">
+                        <svg
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.4"
+                        >
+                          <path d="M2 6l3 3 5-5" />
+                        </svg>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>05</td>
+                  <td>
+                    <div class="rule-primary">Counterparty BIC Match</div>
+                    <div class="rule-expr">
+                      txn_bic = ref_bic AND LENGTH(ref_bic) = 11
+                    </div>
+                  </td>
+                  <td><span class="pill pill-appr">Approved</span></td>
+                  <td>
+                    <div class="conf-wrap">
+                      <div class="conf-top">
+                        <span class="conf-val" style="color: var(--green)"
+                          >96%</span
+                        >
+                      </div>
+                      <div class="conf-bar">
+                        <div
+                          class="conf-fill"
+                          style="width: 96%; background: var(--green)"
+                        ></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="match-stat">3,044 / 3,171</span></td>
+                  <td><span class="date-cell">20 Mar 2026</span></td>
+                  <td>
+                    <div class="row-actions">
+                      <div class="icon-btn">
+                        <svg
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.4"
+                        >
+                          <path d="M1 6s2-4 5-4 5 4 5 4-2 4-5 4-5-4-5-4z" />
+                          <circle cx="6" cy="6" r="1.5" />
+                        </svg>
+                      </div>
+                      <div class="icon-btn">
+                        <svg
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.4"
+                        >
+                          <path d="M2 6l3 3 5-5" />
+                        </svg>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="pagination">
+              <span class="page-info">Showing 1–5 of 93 rules</span>
+              <div class="page-btns">
+                <div class="page-btn">
+                  <svg
+                    viewBox="0 0 11 11"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  >
+                    <path d="M7 2L4 5.5 7 9" />
+                  </svg>
+                </div>
+                <div class="page-btn active">1</div>
+                <div class="page-btn">2</div>
+                <div class="page-btn">3</div>
+                <div class="page-btn">…</div>
+                <div class="page-btn">19</div>
+                <div class="page-btn">
+                  <svg
+                    viewBox="0 0 11 11"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  >
+                    <path d="M4 2l3 3.5-3 3.5" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /content -->
+      </main>
+    </div>
+  </body>
+</html>
