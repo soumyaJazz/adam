@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HSBC SIRE – Accounts</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.3.2/dist/ag-grid-community.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f5f5;
+    --surface: #ffffff;
+    --border: #e0e0e0;
+    --border-light: #ebebeb;
+    --text-primary: #111111;
+    --text-secondary: #666666;
+    --text-muted: #999999;
+    --hsbc-red: #DB0011;
+    --accent-blue: #1a56db;
+    --accent-gold: #d97706;
+    --accent-purple: #7c3aed;
+    --accent-green: #16a34a;
+    --accent-rose: #e11d48;
+    --nav-bg: #111111;
+    --nav-text: #f5f5f5;
+    --tree-hover: #f0f0f0;
+    --tree-active: #fef2f2;
+    --tree-active-text: #DB0011;
+    --row-hover: #fafafa;
+    --tag-generated-bg: #dbeafe;
+    --tag-generated-text: #1d4ed8;
+    --tag-tested-bg: #fef3c7;
+    --tag-tested-text: #b45309;
+    --tag-submitted-bg: #ede9fe;
+    --tag-submitted-text: #6d28d9;
+    --tag-approved-bg: #dcfce7;
+    --tag-approved-text: #15803d;
+    --tag-outdated-bg: #ffe4e6;
+    --tag-outdated-text: #be123c;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --radius: 8px;
+  }
+
+  html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text-primary); }
+
+  /* ── TOP NAV ── */
+  .nav {
+    background: var(--nav-bg);
+    height: 52px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid #222;
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-right: 20px;
+    border-right: 1px solid #333;
+    margin-right: 4px;
+    text-decoration: none;
+  }
+  .hsbc-logo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    width: 22px;
+    height: 22px;
+  }
+  .hsbc-logo span {
+    display: block;
+    background: var(--hsbc-red);
+    border-radius: 1px;
+  }
+  .nav-brand-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.02em;
+  }
+  .nav-divider { color: #444; margin: 0 8px; font-size: 13px; }
+  .nav-sire { font-size: 12px; color: #888; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; }
+  .nav-tabs { display: flex; align-items: stretch; margin-left: 8px; height: 100%; }
+  .nav-tab {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 18px;
+    font-size: 13px;
+    color: #999;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    user-select: none;
+    text-decoration: none;
+  }
+  .nav-tab:hover { color: #ddd; }
+  .nav-tab.active { color: #fff; border-bottom-color: var(--hsbc-red); }
+  .nav-tab svg { width: 14px; height: 14px; }
+  .nav-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .nav-badge {
+    font-size: 11px;
+    color: #aaa;
+    background: #222;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 3px 8px;
+    letter-spacing: 0.05em;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .nav-badge span { color: #666; margin: 0 4px; }
+  .nav-avatar {
+    width: 30px; height: 30px;
+    background: var(--hsbc-red);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: #fff;
+    cursor: pointer;
+  }
+
+  /* ── LAYOUT ── */
+  .layout { display: flex; height: calc(100vh - 52px); overflow: hidden; }
+
+  /* ── SIDEBAR / TREE ── */
+  .sidebar {
+    width: 230px;
+    min-width: 230px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .sidebar-header {
+    padding: 16px 16px 10px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .sidebar-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .sidebar-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+  }
+  .sidebar-search svg { width: 13px; height: 13px; color: var(--text-muted); flex-shrink: 0; }
+  .sidebar-search input {
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    color: var(--text-primary);
+    outline: none;
+    width: 100%;
+    font-family: inherit;
+  }
+  .sidebar-search input::placeholder { color: var(--text-muted); }
+  .tree { flex: 1; overflow-y: auto; padding: 8px 0; }
+  .tree::-webkit-scrollbar { width: 4px; }
+  .tree::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+
+  .tree-region { }
+  .tree-region-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px 7px 14px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    user-select: none;
+    transition: background 0.1s;
+    border-radius: 4px;
+    margin: 1px 6px;
+  }
+  .tree-region-header:hover { background: var(--tree-hover); }
+  .tree-region-header.active { background: var(--tree-active); color: var(--tree-active-text); }
+  .tree-chevron {
+    width: 14px; height: 14px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .tree-chevron.open { transform: rotate(90deg); }
+  .tree-region-dot {
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .tree-region-count {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: #f0f0f0;
+    border-radius: 10px;
+    padding: 1px 6px;
+  }
+  .tree-currencies { overflow: hidden; }
+  .tree-currency {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px 5px 38px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 4px;
+    margin: 1px 6px;
+    transition: background 0.1s, color 0.1s;
+    user-select: none;
+  }
+  .tree-currency:hover { background: var(--tree-hover); }
+  .tree-currency.selected { background: var(--tree-active); color: var(--tree-active-text); font-weight: 500; }
+  .tree-currency-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    width: 32px;
+  }
+  .tree-currency-name { color: var(--text-muted); font-size: 11px; }
+  .tree-currency-count {
+    margin-left: auto;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .sidebar-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border-light);
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .filter-clear {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--hsbc-red);
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .filter-clear:hover { text-decoration: underline; }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+  }
+  .main-inner { flex: 1; overflow: hidden; display: flex; flex-direction: column; padding: 20px 24px; gap: 14px; }
+
+  /* ── BREADCRUMBS ── */
+  .breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .breadcrumbs a { color: var(--text-muted); text-decoration: none; transition: color 0.15s; }
+  .breadcrumbs a:hover { color: var(--text-primary); }
+  .breadcrumbs .sep { color: #ccc; }
+  .breadcrumbs .current { color: var(--text-primary); font-weight: 500; }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .page-title-area { flex: 1; }
+  .page-title { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; }
+  .page-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .page-actions { display: flex; gap: 10px; align-items: center; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn svg { width: 14px; height: 14px; }
+  .btn-ghost {
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: #f5f5f5; border-color: #ccc; }
+  .btn-primary {
+    background: var(--text-primary);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #333; }
+  .btn-red {
+    background: var(--hsbc-red);
+    color: #fff;
+  }
+  .btn-red:hover { background: #b80010; }
+
+  /* ── STATS ROW ── */
+  .stats-row { display: flex; gap: 12px; }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    flex: 1;
+    min-width: 0;
+  }
+  .stat-label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .stat-value { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+  .stat-change { font-size: 11px; margin-top: 4px; font-weight: 500; display: flex; align-items: center; gap: 3px; }
+  .stat-change.up { color: var(--accent-green); }
+  .stat-change.down { color: var(--accent-rose); }
+  .stat-change.warn { color: var(--accent-gold); }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+  }
+  .search-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    width: 220px;
+  }
+  .search-input svg { width: 13px; height: 13px; color: var(--text-muted); }
+  .search-input input { border: none; background: transparent; font-size: 13px; font-family: inherit; outline: none; color: var(--text-primary); width: 100%; }
+  .search-input input::placeholder { color: var(--text-muted); }
+
+  .filter-sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+  .status-filters { display: flex; gap: 6px; }
+  .status-btn {
+    padding: 5px 13px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .status-btn.all { background: var(--text-primary); color: #fff; }
+  .status-btn.generated { background: var(--tag-generated-bg); color: var(--tag-generated-text); border-color: #bfdbfe; }
+  .status-btn.tested { background: var(--tag-tested-bg); color: var(--tag-tested-text); border-color: #fde68a; }
+  .status-btn.submitted { background: var(--tag-submitted-bg); color: var(--tag-submitted-text); border-color: #ddd6fe; }
+  .status-btn.approved { background: var(--tag-approved-bg); color: var(--tag-approved-text); border-color: #bbf7d0; }
+  .status-btn.outdated { background: var(--tag-outdated-bg); color: var(--tag-outdated-text); border-color: #fecdd3; }
+  .status-btn:not(.all):hover { opacity: 0.75; }
+  .filter-actions { margin-left: auto; display: flex; gap: 8px; }
+
+  /* ── GRID CONTAINER ── */
+  .grid-wrap {
+    flex: 1;
+    min-height: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  #accountGrid { width: 100%; height: 100%; }
+
+  /* ── AG GRID CUSTOM THEME ── */
+  .ag-theme-custom {
+    --ag-background-color: #fff;
+    --ag-foreground-color: #111;
+    --ag-border-color: #e8e8e8;
+    --ag-header-background-color: #f9f9f9;
+    --ag-header-foreground-color: #666;
+    --ag-odd-row-background-color: #fff;
+    --ag-row-hover-color: #fafafa;
+    --ag-selected-row-background-color: #fef2f2;
+    --ag-font-family: 'DM Sans', sans-serif;
+    --ag-font-size: 13px;
+    --ag-cell-horizontal-padding: 16px;
+    --ag-row-height: 52px;
+    --ag-header-height: 40px;
+    --ag-borders: solid 1px;
+    --ag-border-radius: 0px;
+  }
+  .ag-theme-custom .ag-header-cell-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #999;
+  }
+  .ag-theme-custom .ag-row { border-bottom: 1px solid #f0f0f0; cursor: pointer; }
+  .ag-theme-custom .ag-row:hover { background: #fafafa !important; }
+  .ag-theme-custom .ag-header { border-bottom: 2px solid #e8e8e8; }
+  .ag-theme-custom .ag-cell { display: flex; align-items: center; }
+
+  /* ── CELL RENDERERS ── */
+  .cell-account { display: flex; flex-direction: column; gap: 1px; }
+  .cell-account-name { font-weight: 600; font-size: 13px; color: #111; }
+  .cell-account-id { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #999; }
+
+  .cell-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .cell-status-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .cell-status.active { background: var(--tag-approved-bg); color: var(--tag-approved-text); }
+  .cell-status.active .cell-status-dot { background: var(--accent-green); }
+  .cell-status.inactive { background: #f5f5f5; color: #888; }
+  .cell-status.inactive .cell-status-dot { background: #bbb; }
+  .cell-status.review { background: var(--tag-tested-bg); color: var(--tag-tested-text); }
+  .cell-status.review .cell-status-dot { background: var(--accent-gold); }
+
+  .cell-match { display: flex; flex-direction: column; gap: 4px; min-width: 80px; }
+  .cell-match-pct { font-size: 13px; font-weight: 600; }
+  .cell-match-bar { height: 3px; border-radius: 2px; background: #eee; overflow: hidden; }
+  .cell-match-fill { height: 100%; border-radius: 2px; }
+
+  .cell-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .cell-badge.generated { background: var(--tag-generated-bg); color: var(--tag-generated-text); }
+  .cell-badge.tested { background: var(--tag-tested-bg); color: var(--tag-tested-text); }
+  .cell-badge.submitted { background: var(--tag-submitted-bg); color: var(--tag-submitted-text); }
+  .cell-badge.approved { background: var(--tag-approved-bg); color: var(--tag-approved-text); }
+  .cell-badge.outdated { background: var(--tag-outdated-bg); color: var(--tag-outdated-text); }
+
+  .cell-mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #555; }
+  .cell-tag { display: inline-flex; gap: 4px; }
+  .tag-pill {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 3px;
+    background: #f0f0f0;
+    color: #555;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tag-pill.tlm { background: #dbeafe; color: #1d4ed8; }
+  .tag-pill.hbeu { background: #ede9fe; color: #6d28d9; }
+  .tag-pill.hbap { background: #fef3c7; color: #b45309; }
+  .tag-pill.hbus { background: #dcfce7; color: #15803d; }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <a class="nav-brand" href="#">
+    <div class="hsbc-logo">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <span class="nav-brand-text">HSBC</span>
+  </a>
+  <span class="nav-divider">|</span>
+  <span class="nav-sire">SIRE</span>
+
+  <div class="nav-tabs">
+    <a class="nav-tab" href="#">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+      Statistics
+    </a>
+    <a class="nav-tab active" href="#">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M2 8h12M2 12h8"/></svg>
+      Accounts
+    </a>
+    <a class="nav-tab" href="#">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5h10M3 8h6M3 11h8"/><rect x="1" y="1" width="14" height="14" rx="2"/></svg>
+      Rules
+    </a>
+  </div>
+
+  <div class="nav-right">
+    <div class="nav-badge">TLM<span>·</span>HBEU</div>
+    <div class="nav-avatar">AK</div>
+  </div>
+</nav>
+
+<!-- ── LAYOUT ── -->
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">Filter by Region</div>
+      <div class="sidebar-search">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="m11 11 3 3"/></svg>
+        <input type="text" id="treeSearch" placeholder="Search..." />
+      </div>
+    </div>
+
+    <div class="tree" id="filterTree"></div>
+
+    <div class="sidebar-footer">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4h14M4 8h8M6 12h4"/></svg>
+      <span id="filterLabel">All regions</span>
+      <span class="filter-clear" id="clearFilter" style="display:none">Clear</span>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+    <div class="main-inner">
+
+      <!-- Breadcrumbs -->
+      <nav class="breadcrumbs">
+        <a href="#">Dashboard</a>
+        <span class="sep">/</span>
+        <span class="current">Accounts</span>
+      </nav>
+
+      <!-- Page header -->
+      <div class="page-header">
+        <div class="page-title-area">
+          <div class="page-title">Accounts</div>
+          <div class="page-subtitle">Reconciliation accounts across all regions and platforms</div>
+        </div>
+        <div class="page-actions">
+          <button class="btn btn-ghost">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1v10M3 6l5 5 5-5M1 13h14"/></svg>
+            Export
+          </button>
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="7"/><path d="M8 5v6M5 8h6"/></svg>
+            Add Account
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Total Accounts</div>
+          <div class="stat-value" id="stat-total">–</div>
+          <div class="stat-change up">▲ 3 this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active</div>
+          <div class="stat-value" id="stat-active">–</div>
+          <div class="stat-change up">▲ 2.1%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg Match Rate</div>
+          <div class="stat-value">88%</div>
+          <div class="stat-change up">▲ 2.1%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Needs Review</div>
+          <div class="stat-value" style="color:var(--accent-rose)" id="stat-review">–</div>
+          <div class="stat-change warn">⚠ outdated rules</div>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <div class="search-input">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="m11 11 3 3"/></svg>
+          <input type="text" id="gridSearch" placeholder="Search accounts…" />
+        </div>
+        <div class="filter-sep"></div>
+        <div class="status-filters">
+          <button class="status-btn all" data-status="all">All</button>
+          <button class="status-btn generated" data-status="Active">Active</button>
+          <button class="status-btn tested" data-status="Review">Review</button>
+          <button class="status-btn submitted" data-status="Inactive">Inactive</button>
+        </div>
+        <div class="filter-actions">
+          <button class="btn btn-ghost" style="padding:6px 12px; font-size:12px;">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 4h14M4 8h8M6 12h4"/></svg>
+            Columns
+          </button>
+        </div>
+      </div>
+
+      <!-- AG Grid -->
+      <div class="grid-wrap">
+        <div id="accountGrid" class="ag-theme-custom"></div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────────
+const regions = [
+  { id: 'HBEU', name: 'HBEU', label: 'Europe', color: '#7c3aed', currencies: ['GBP','EUR','CHF','SEK','NOK'] },
+  { id: 'HBUS', name: 'HBUS', label: 'Americas', color: '#16a34a', currencies: ['USD','CAD','BRL','MXN'] },
+  { id: 'HBAP', name: 'HBAP', label: 'Asia Pacific', color: '#d97706', currencies: ['HKD','SGD','JPY','AUD','CNY','HUF'] },
+  { id: 'HBME', name: 'HBME', label: 'Middle East', color: '#e11d48', currencies: ['AED','SAR','QAR'] },
+];
+
+const accountData = [
+  { id:'HUF-00204500125', name:'UNICREDIT BK HUNGARY-PAR', region:'HBAP', currency:'HUF', platform:'TLM', type:'MOT', assetClass:'Asset Services', matchRate:88, totalRules:93, outdatedRules:1, status:'Active' },
+  { id:'GBP-00301200040', name:'BARCLAYS LONDON SETTLEMENT', region:'HBEU', currency:'GBP', platform:'TLM', type:'DVP', assetClass:'Equities', matchRate:97, totalRules:114, outdatedRules:0, status:'Active' },
+  { id:'EUR-00500100210', name:'DEUTSCHE BANK AG FRANKFURT', region:'HBEU', currency:'EUR', platform:'TLM', type:'FOP', assetClass:'Fixed Income', matchRate:82, totalRules:67, outdatedRules:3, status:'Review' },
+  { id:'USD-00102900033', name:'JP MORGAN CHASE NEW YORK', region:'HBUS', currency:'USD', platform:'TLM', type:'DVP', assetClass:'Equities', matchRate:95, totalRules:201, outdatedRules:0, status:'Active' },
+  { id:'HKD-00408700091', name:'HSBC HONG KONG CLEARING', region:'HBAP', currency:'HKD', platform:'TLM', type:'MOT', assetClass:'Equities', matchRate:91, totalRules:88, outdatedRules:2, status:'Active' },
+  { id:'CHF-00610200018', name:'UBS AG ZURICH PRIME', region:'HBEU', currency:'CHF', platform:'TLM', type:'FOP', assetClass:'Money Market', matchRate:76, totalRules:45, outdatedRules:4, status:'Review' },
+  { id:'SGD-00709100055', name:'DBS BANK SINGAPORE', region:'HBAP', currency:'SGD', platform:'TLM', type:'DVP', assetClass:'Asset Services', matchRate:99, totalRules:132, outdatedRules:0, status:'Active' },
+  { id:'CAD-00201800077', name:'ROYAL BANK OF CANADA', region:'HBUS', currency:'CAD', platform:'TLM', type:'MOT', assetClass:'Fixed Income', matchRate:89, totalRules:73, outdatedRules:1, status:'Active' },
+  { id:'AED-00900500012', name:'EMIRATES NBD DUBAI', region:'HBME', currency:'AED', platform:'TLM', type:'DVP', assetClass:'Equities', matchRate:71, totalRules:29, outdatedRules:2, status:'Review' },
+  { id:'JPY-00511300140', name:'MIZUHO BANK TOKYO REPO', region:'HBAP', currency:'JPY', platform:'TLM', type:'REPO', assetClass:'Fixed Income', matchRate:93, totalRules:157, outdatedRules:0, status:'Active' },
+  { id:'EUR-00600200099', name:'SOCIETE GENERALE PARIS', region:'HBEU', currency:'EUR', platform:'TLM', type:'DVP', assetClass:'Equities', matchRate:85, totalRules:91, outdatedRules:1, status:'Active' },
+  { id:'USD-00302100064', name:'BANK OF AMERICA MERRILL LYNCH', region:'HBUS', currency:'USD', platform:'TLM', type:'FOP', assetClass:'Fixed Income', matchRate:94, totalRules:188, outdatedRules:0, status:'Active' },
+  { id:'AUD-00413900023', name:'COMMONWEALTH BANK AUSTRALIA', region:'HBAP', currency:'AUD', platform:'TLM', type:'MOT', assetClass:'Asset Services', matchRate:80, totalRules:54, outdatedRules:3, status:'Review' },
+  { id:'GBP-00700400105', name:'LLOYDS BANK CORPORATE MKTS', region:'HBEU', currency:'GBP', platform:'TLM', type:'DVP', assetClass:'Equities', matchRate:96, totalRules:122, outdatedRules:0, status:'Active' },
+  { id:'CNY-00615800037', name:'BANK OF CHINA SHANGHAI', region:'HBAP', currency:'CNY', platform:'TLM', type:'MOT', assetClass:'Fixed Income', matchRate:87, totalRules:66, outdatedRules:1, status:'Inactive' },
+  { id:'SAR-00901200008', name:'SAUDI NATIONAL BANK RIYADH', region:'HBME', currency:'SAR', platform:'TLM', type:'DVP', assetClass:'Equities', matchRate:68, totalRules:21, outdatedRules:5, status:'Review' },
+  { id:'SEK-00803100016', name:'SWEDBANK STOCKHOLM', region:'HBEU', currency:'SEK', platform:'TLM', type:'FOP', assetClass:'Money Market', matchRate:90, totalRules:38, outdatedRules:0, status:'Active' },
+  { id:'BRL-00205700029', name:'ITAU UNIBANCO SAO PAULO', region:'HBUS', currency:'BRL', platform:'TLM', type:'MOT', assetClass:'Equities', matchRate:73, totalRules:47, outdatedRules:2, status:'Review' },
+];
+
+// ─── STATE ─────────────────────────────────────────────────────────────
+let selectedRegion = null;
+let selectedCurrency = null;
+let statusFilter = 'all';
+let gridApi = null;
+
+// ─── TREE ──────────────────────────────────────────────────────────────
+function buildTree() {
+  const container = document.getElementById('filterTree');
+  container.innerHTML = '';
+
+  // Count per currency
+  const currencyCount = {};
+  const regionCount = {};
+  accountData.forEach(a => {
+    currencyCount[a.currency] = (currencyCount[a.currency] || 0) + 1;
+    regionCount[a.region] = (regionCount[a.region] || 0) + 1;
+  });
+
+  regions.forEach(region => {
+    const regionEl = document.createElement('div');
+    regionEl.className = 'tree-region';
+
+    const header = document.createElement('div');
+    header.className = 'tree-region-header' + (selectedRegion === region.id && !selectedCurrency ? ' active' : '');
+    header.innerHTML = `
+      <svg class="tree-chevron ${selectedRegion === region.id ? 'open' : ''}" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 4l4 4-4 4"/>
+      </svg>
+      <span class="tree-region-dot" style="background:${region.color}"></span>
+      <span>${region.name} <span style="font-weight:400;color:#aaa;font-size:11px;">${region.label}</span></span>
+      <span class="tree-region-count">${regionCount[region.id] || 0}</span>
+    `;
+
+    const currenciesEl = document.createElement('div');
+    currenciesEl.className = 'tree-currencies';
+    currenciesEl.style.display = selectedRegion === region.id ? 'block' : 'none';
+
+    region.currencies.forEach(cur => {
+      const count = currencyCount[cur] || 0;
+      const curEl = document.createElement('div');
+      curEl.className = 'tree-currency' + (selectedCurrency === cur ? ' selected' : '');
+      curEl.innerHTML = `
+        <span class="tree-currency-code">${cur}</span>
+        <span class="tree-currency-name">${getCurrencyName(cur)}</span>
+        <span class="tree-currency-count">${count}</span>
+      `;
+      curEl.addEventListener('click', e => { e.stopPropagation(); selectCurrency(region.id, cur); });
+      currenciesEl.appendChild(curEl);
+    });
+
+    header.addEventListener('click', () => toggleRegion(region.id));
+
+    regionEl.appendChild(header);
+    regionEl.appendChild(currenciesEl);
+    container.appendChild(regionEl);
+  });
+}
+
+function getCurrencyName(code) {
+  const map = { GBP:'Pound', EUR:'Euro', CHF:'Franc', SEK:'Krona', NOK:'Krone',
+    USD:'Dollar', CAD:'Dollar', BRL:'Real', MXN:'Peso',
+    HKD:'Dollar', SGD:'Dollar', JPY:'Yen', AUD:'Dollar', CNY:'Yuan', HUF:'Forint',
+    AED:'Dirham', SAR:'Riyal', QAR:'Riyal' };
+  return map[code] || code;
+}
+
+function toggleRegion(regionId) {
+  if (selectedRegion === regionId) {
+    selectedRegion = null; selectedCurrency = null;
+  } else {
+    selectedRegion = regionId; selectedCurrency = null;
+  }
+  buildTree(); applyFilters(); updateFooter();
+}
+
+function selectCurrency(regionId, currency) {
+  selectedRegion = regionId;
+  selectedCurrency = selectedCurrency === currency ? null : currency;
+  buildTree(); applyFilters(); updateFooter();
+}
+
+function updateFooter() {
+  const label = document.getElementById('filterLabel');
+  const clear = document.getElementById('clearFilter');
+  if (selectedCurrency) {
+    label.textContent = `${selectedCurrency} · ${selectedRegion}`;
+    clear.style.display = 'block';
+  } else if (selectedRegion) {
+    const r = regions.find(x => x.id === selectedRegion);
+    label.textContent = `${r.name} – ${r.label}`;
+    clear.style.display = 'block';
+  } else {
+    label.textContent = 'All regions';
+    clear.style.display = 'none';
+  }
+}
+
+document.getElementById('clearFilter').addEventListener('click', () => {
+  selectedRegion = null; selectedCurrency = null;
+  buildTree(); applyFilters(); updateFooter();
+});
+
+// ─── AG GRID ──────────────────────────────────────────────────────────
+function applyFilters() {
+  if (!gridApi) return;
+  gridApi.setGridOption('rowData', getFilteredData());
+  updateStats();
+}
+
+function getFilteredData() {
+  let data = [...accountData];
+  if (selectedCurrency) data = data.filter(a => a.currency === selectedCurrency);
+  else if (selectedRegion) data = data.filter(a => a.region === selectedRegion);
+  if (statusFilter !== 'all') data = data.filter(a => a.status === statusFilter);
+  const q = document.getElementById('gridSearch').value.toLowerCase();
+  if (q) data = data.filter(a => a.name.toLowerCase().includes(q) || a.id.toLowerCase().includes(q) || a.currency.toLowerCase().includes(q));
+  return data;
+}
+
+function updateStats() {
+  const d = getFilteredData();
+  document.getElementById('stat-total').textContent = d.length;
+  document.getElementById('stat-active').textContent = d.filter(a => a.status === 'Active').length;
+  document.getElementById('stat-review').textContent = d.filter(a => a.outdatedRules > 0).length;
+}
+
+// Cell renderers
+function AccountCellRenderer(params) {
+  return `<div class="cell-account">
+    <span class="cell-account-name">${params.data.name}</span>
+    <span class="cell-account-id">${params.data.id}</span>
+  </div>`;
+}
+
+function StatusCellRenderer(params) {
+  const s = params.value.toLowerCase();
+  const map = { active:'Active', review:'Review', inactive:'Inactive' };
+  return `<span class="cell-status ${s}">
+    <span class="cell-status-dot"></span>${map[s] || params.value}
+  </span>`;
+}
+
+function MatchRateCellRenderer(params) {
+  const v = params.value;
+  const color = v >= 90 ? '#16a34a' : v >= 80 ? '#1a56db' : v >= 70 ? '#d97706' : '#e11d48';
+  return `<div class="cell-match">
+    <span class="cell-match-pct" style="color:${color}">${v}%</span>
+    <div class="cell-match-bar"><div class="cell-match-fill" style="width:${v}%;background:${color}"></div></div>
+  </div>`;
+}
+
+function RegionCellRenderer(params) {
+  const cls = params.value.toLowerCase();
+  return `<span class="tag-pill ${cls}">${params.value}</span>`;
+}
+
+function PlatformCellRenderer(params) {
+  return `<div class="cell-tag">
+    <span class="tag-pill ${params.data.platform.toLowerCase()}">${params.data.platform}</span>
+    <span class="tag-pill ${params.data.region.toLowerCase()}">${params.data.region}</span>
+  </div>`;
+}
+
+function OutdatedCellRenderer(params) {
+  if (params.value === 0) return `<span style="color:#bbb;font-size:12px;">–</span>`;
+  return `<span class="cell-badge outdated">${params.value} outdated</span>`;
+}
+
+const columnDefs = [
+  {
+    headerName: '#',
+    valueGetter: p => p.node.rowIndex + 1,
+    width: 48,
+    cellStyle: { color: '#ccc', fontFamily: "'JetBrains Mono',monospace", fontSize: '11px' },
+    sortable: false,
+  },
+  {
+    headerName: 'Account',
+    field: 'name',
+    flex: 3,
+    cellRenderer: p => AccountCellRenderer(p),
+    sortable: true,
+    filter: false,
+  },
+  {
+    headerName: 'Currency',
+    field: 'currency',
+    width: 90,
+    cellRenderer: p => `<span class="cell-mono">${p.value}</span>`,
+    sortable: true,
+  },
+  {
+    headerName: 'Region / Platform',
+    field: 'region',
+    width: 160,
+    cellRenderer: p => PlatformCellRenderer(p),
+    sortable: true,
+  },
+  {
+    headerName: 'Type',
+    field: 'type',
+    width: 80,
+    cellRenderer: p => `<span class="cell-mono">${p.value}</span>`,
+    sortable: true,
+  },
+  {
+    headerName: 'Asset Class',
+    field: 'assetClass',
+    width: 140,
+    cellStyle: { fontSize: '12px', color: '#555' },
+    sortable: true,
+  },
+  {
+    headerName: 'Match Rate',
+    field: 'matchRate',
+    width: 130,
+    cellRenderer: p => MatchRateCellRenderer(p),
+    sortable: true,
+    sort: 'desc',
+  },
+  {
+    headerName: 'Rules',
+    field: 'totalRules',
+    width: 80,
+    cellStyle: { fontFamily: "'JetBrains Mono',monospace", fontSize: '12px', color: '#555' },
+    sortable: true,
+  },
+  {
+    headerName: 'Health',
+    field: 'outdatedRules',
+    width: 130,
+    cellRenderer: p => OutdatedCellRenderer(p),
+    sortable: true,
+  },
+  {
+    headerName: 'Status',
+    field: 'status',
+    width: 110,
+    cellRenderer: p => StatusCellRenderer(p),
+    sortable: true,
+  },
+];
+
+// Init grid
+document.addEventListener('DOMContentLoaded', () => {
+  buildTree();
+
+  const gridOptions = {
+    columnDefs,
+    rowData: getFilteredData(),
+    defaultColDef: { resizable: true, suppressMovable: false },
+    suppressCellFocus: true,
+    rowSelection: 'single',
+    animateRows: true,
+    onRowClicked: p => console.log('Row clicked:', p.data.id),
+    rowHeight: 52,
+    headerHeight: 40,
+  };
+
+  const el = document.getElementById('accountGrid');
+  gridApi = agGrid.createGrid(el, gridOptions);
+  updateStats();
+
+  // grid search
+  document.getElementById('gridSearch').addEventListener('input', () => { applyFilters(); });
+
+  // status filters
+  document.querySelectorAll('.status-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.status-btn').forEach(b => {
+        b.classList.remove('all');
+        b.style.fontWeight = '500';
+      });
+      btn.style.fontWeight = '700';
+      statusFilter = btn.dataset.status;
+      if (statusFilter === 'all') btn.classList.add('all');
+      applyFilters();
+    });
+  });
+
+  // tree search
+  document.getElementById('treeSearch').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    document.querySelectorAll('.tree-currency').forEach(el => {
+      const code = el.querySelector('.tree-currency-code').textContent.toLowerCase();
+      const name = el.querySelector('.tree-currency-name').textContent.toLowerCase();
+      el.style.display = (!q || code.includes(q) || name.includes(q)) ? '' : 'none';
+    });
+  });
+});
+</script>
+</body>
+</html>
